@@ -10,7 +10,7 @@ function App() {
   // Hàm để lấy danh sách user từ backend
   const fetchUsers = async () => {
     try {
-      // Gửi yêu cầu GET đến backend để lấy danh sách user
+      // Gửi yêu cầu GET đến backend để lấy danh sách user từ MongoDB
       const response = await axios.get("http://localhost:3000/users");
       setUsers(response.data);
     } catch (error) {
@@ -25,7 +25,8 @@ function App() {
 
   // Hàm để cập nhật danh sách user sau khi thêm thành công
   const handleUserAdded = (newUser) => {
-    setUsers([...users, newUser]);
+    // Sau khi thêm user mới, gọi lại hàm fetchUsers để cập nhật danh sách từ database
+    fetchUsers();
   };
 
   return (

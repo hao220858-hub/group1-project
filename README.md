@@ -4,5 +4,5 @@
 
 | STT | Tên thành viên | Vai trò          |
 |-----|----------------|------------------|
-| 1   | Võ Chí Thiện   | Backend & Database |
-| 2   | Phạm Nhật Hào  | Frontend         |
+| 1   | Phạm Nhật Hào  | Backend & Database |
+| 2   | Võ Chí Thiện   | Frontend         |
