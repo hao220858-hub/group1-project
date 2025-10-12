@@ -1,23 +1,22 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const userRoutes = require('./routes/user');
+const cors = require('cors');
+require('dotenv').config();
 
-const app = express(); // Phải khởi tạo app ở đây
+const userRoutes = require('./routes/user'); // ✅ đúng đường dẫn
 
-// Middlewares
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(cors());
 app.use(express.json());
 
-// Routes
+// ✅ gắn route ở đây
 app.use('/api/users', userRoutes);
 
-// Connect to MongoDB
-const dbURI = 'mongodb+srv://Hao:Hao123456@cluster0.dq61akf.mongodb.net/groupDB?retryWrites=true&w=majority';
-
-mongoose.connect(dbURI)
-    .then(() => console.log('MongoDB connected...')) // Bỏ comment ở dòng này
-    .catch(err => console.log(err));
-
-
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+mongoose.connect(process.env.DB_URI)
+  .then(() => {
+    console.log('✅ MongoDB connected successfully!');
+    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+  })
+  .catch(err => console.error('❌ Lỗi kết nối MongoDB:', err));

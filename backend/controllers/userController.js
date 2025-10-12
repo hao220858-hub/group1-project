@@ -51,3 +51,25 @@ exports.deleteUser = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+const mongoose = require('mongoose');
+
+const UserSchema = new mongoose.Schema({
+    // Trường tên (name): Bắt buộc
+    name: {
+        type: String,
+        required: true
+    },
+    // Trường email: Bắt buộc và phải là duy nhất
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    // Trường ngày tạo, tự động thêm
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
+module.exports = mongoose.model('User', UserSchema);
