@@ -1,34 +1,34 @@
 const jwt = require('jsonwebtoken');
 
-/**
- * Middleware để xác thực JWT Token
- */
 const authMiddleware = (req, res, next) => {
-    // 1. Lấy token từ header (Authorization: "Bearer <token>")
+    // Lấy token từ header
     const authHeader = req.header('Authorization');
 
-    // 2. Kiểm tra xem header có tồn tại không
+    // Kiểm tra xem có header 'Authorization' không
     if (!authHeader) {
-        return res.status(401).json({ message: 'Không tìm thấy token, truy cập bị từ chối' });
+        return res.status(401).json({ message: 'Không có token, không có quyền truy cập' });
+    }
+
+    // Header 'Authorization' thường có dạng "Bearer [token]"
+    // Tách chữ "Bearer" ra để lấy token
+    const token = authHeader.split(' ')[1];
+
+    // Kiểm tra xem có token sau khi tách không
+    if (!token) {
+        return res.status(401).json({ message: 'Token không hợp lệ (Malformed token)' });
     }
 
     try {
-        // 3. Tách chuỗi "Bearer " để lấy token
-        const token = authHeader.split(' ')[1];
-        if (!token) {
-            return res.status(401).json({ message: 'Token không hợp lệ, truy cập bị từ chối' });
-        }
-
-        // 4. Xác thực token
+        // Xác thực token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
-        // 5. Gắn thông tin user (đã được giải mã) vào request
-        // Chúng ta chỉ cần lấy ID từ token mà chúng ta đã tạo ở HĐ 1
-        req.userId = decoded.id; 
-        
-        // 6. Chuyển sang middleware/controller tiếp theo
-        next();
+        // === THAY ĐỔI QUAN TRỌNG (HĐ 3) ===
+        // Gắn toàn bộ thông tin user (bao gồm id và role) vào request
+        // thay vì chỉ gắn 'decoded.id' như HĐ 2
+        req.user = decoded; 
+        // ==================================
 
+        next(); // Đi tiếp
     } catch (err) {
         console.error('Lỗi xác thực token:', err.message);
         res.status(401).json({ message: 'Token không hợp lệ' });
@@ -36,3 +36,4 @@ const authMiddleware = (req, res, next) => {
 };
 
 module.exports = authMiddleware;
+
